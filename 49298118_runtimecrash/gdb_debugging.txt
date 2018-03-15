@@ -1,0 +1,57 @@
+
+In command prompt:
+C:\> SET PATH=%PATH%;C:\Qt\5.9.4\mingw53_32\bin
+C:\> cd proj\build-quickTest-Desktop_Qt_5_9_4_MinGW_32bit-Debug\debug
+C:\> C:\Qt\Tools\mingw530_32\bin\gdb quickTest.exe
+(gdb) break OutputDebugStringA
+Function "OutputDebugStringA" not defined.
+Make breakpoint pending on future shared library load? (y or [n]) y
+Breakpoint 1 (OutputDebugStringA) pending.
+(gdb) r
+when it breaks print the backtrace
+(gdb) bt
+<backtrace...>
+(gdb) c
+Continuing.
+warning: QML debugging is enabled. Only use this in a safe environment.
+(gdb) bt
+<backtrace...>
+(gdb) c
+Continuing.
+warning: qml: Object item: esri.useragent = Générateur Simplifié de Plans de Vol
+
+
+Breakpoint 1, 0x74d535fc in OutputDebugStringA ()
+   from C:\Windows\syswow64\KernelBase.dll
+(gdb) bt
+#0  0x74d535fc in OutputDebugStringA ()
+   from C:\Windows\syswow64\KernelBase.dll
+#1  0x754569c4 in msvcrt!_chkesp () from C:\Windows\syswow64\msvcrt.dll
+#2  0x754569d0 in msvcrt!_chkesp () from C:\Windows\syswow64\msvcrt.dll
+#3  0x00010001 in ?? ()
+#4  0x7543b9b7 in msvcrt!_ftol2_sse_excpt ()
+   from C:\Windows\syswow64\msvcrt.dll
+#5  0x00000000 in ?? ()
+(gdb) c
+Continuing.
+warning: Invalid parameter passed to C runtime function.
+
+Program received signal SIGSEGV, Segmentation fault.
+0x770a2302 in ntdll!RtlEnterCriticalSection ()
+   from C:\Windows\SysWOW64\ntdll.dll
+(gdb) bt
+#0  0x770a2302 in ntdll!RtlEnterCriticalSection ()
+   from C:\Windows\SysWOW64\ntdll.dll
+#1  0x004080b7 in _lock_file ()
+#2  0x00402fe1 in __mingw_vfprintf ()
+#3  0x00401656 in fprintf (__stream=0x0,
+    __format=0x40b1fa <qMain(int, char**)::{lambda()#3}::operator()() const::qst
+ring_literal+154> "def\n")
+    at C:/Qt/Tools/mingw530_32/i686-w64-mingw32/include/stdio.h:289
+#4  0x00401b2d in qMain (argc=1, argv=argv@entry=0x21319038)
+    at ..\quickTest\main.cpp:32
+#5  0x00402f05 in WinMain@16 () at qtmain_win.cpp:104
+#6  0x0040949d in main ()
+(gdb)
+
+We can see that fprintf is called with __stream=0x0 which causes the segfault.
